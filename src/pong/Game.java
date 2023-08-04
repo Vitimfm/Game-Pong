@@ -14,16 +14,18 @@ import javax.swing.JFrame;
 public class Game extends Canvas implements Runnable, KeyListener{
 	
 	private static final long serialVersionUID = 1L;
-	public static int WIDTH = 160, HEIGHT = 120, SCALE = 3;
+	public static int WIDTH = 160, HEIGHT = 120, SCALE = 3; //window variables 
 	
 	public BufferedImage layer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+	//layer to draw the objects before render them in the screen (BufferedImage)
 	
 	public static Player player;
 	public static Enemy enemy;
 	public static Ball ball;
 	
+	//Constructor Method 
 	public Game() {
-		this.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+		this.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE)); //window dimension 
 		this.addKeyListener(this);
 		player = new Player(100, HEIGHT-5);
 		enemy = new Enemy(100, 0);
@@ -35,12 +37,13 @@ public class Game extends Canvas implements Runnable, KeyListener{
 		JFrame frame = new JFrame("Pong");
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(game);
-		frame.pack();
-		frame.setLocationRelativeTo(null);
+		frame.add(game); //add object 'game' in the window
+		frame.pack(); 
+		frame.setLocationRelativeTo(null); //centralize the window 
 		frame.setVisible(true);
 		
 		new Thread(game).start();
+		//new Thread to execute the run() method separately from the main method
 	}
 	
 	public void tick() {
@@ -48,21 +51,28 @@ public class Game extends Canvas implements Runnable, KeyListener{
 		enemy.tick();
 		ball.tick();
 	}
-	public void render() {
-		BufferStrategy bs = this.getBufferStrategy();
+	public void render() { //draw the elements of the game 
+		
+		BufferStrategy bs = this.getBufferStrategy();  
 		if(bs == null) {
-			this.createBufferStrategy(3);
+			this.createBufferStrategy(3); ///to avoid flickering
 			return;
 		}
-		Graphics g = layer.getGraphics();
+		Graphics g = layer.getGraphics(); 
+		//g = graphics associeted with the BufferedImage layer 
+		
 		g.setColor(Color.black);
-		g.fillRect(0,0, WIDTH, HEIGHT);
+		g.fillRect(0,0, WIDTH, HEIGHT); 
 		player.render(g);
 		enemy.render(g);
 		ball.render(g);
+		//create a black Rectangule in the screen dimensions and add the objects in this layer
+		
 		g = bs.getDrawGraphics();
-		g.drawImage(layer, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
+		//g now represents the draw area in the screen (after the BufferStrategy)
+		g.drawImage(layer, 10, 10, WIDTH * SCALE, HEIGHT * SCALE, null); 
 		bs.show();
+		//now the layer with the objects will be rendered and it will be shown in the screen
 	}
 	
 	public void run() {
@@ -81,8 +91,7 @@ public class Game extends Canvas implements Runnable, KeyListener{
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		
-		
+		 
 	}
 
 	@Override
@@ -91,8 +100,7 @@ public class Game extends Canvas implements Runnable, KeyListener{
 			player.right = true;
 		}else if(e.getKeyCode()== KeyEvent.VK_LEFT) {
 			player.left = true;
-		}
-		
+		}	
 	}
 
 	@Override
@@ -102,7 +110,5 @@ public class Game extends Canvas implements Runnable, KeyListener{
 		}else if(e.getKeyCode()== KeyEvent.VK_LEFT) {
 			player.left = false;
 		}
-		
 	}
-
 }
